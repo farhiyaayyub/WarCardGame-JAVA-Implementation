@@ -5,3 +5,6 @@
 # Generated Java output
 out/
 *.class
+
+# Local presentation notes
+docs/
