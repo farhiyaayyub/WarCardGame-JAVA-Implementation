@@ -1,0 +1,7 @@
+# IntelliJ local project settings
+.idea/
+*.iml
+
+# Generated Java output
+out/
+*.class

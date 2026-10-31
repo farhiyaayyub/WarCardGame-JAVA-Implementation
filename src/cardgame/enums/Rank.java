@@ -1,6 +1,5 @@
-package cardgame;
+package cardgame.enums;
 
-// Lists the card ranks from highest to lowest and their short file codes.
 public enum Rank {
     ACE("A"),
     KING("K"),
@@ -18,17 +17,15 @@ public enum Rank {
 
     private final String code;
 
-    // Saves the short code used to represent this rank in the card file.
     Rank(String code) {
         this.code = code;
     }
 
-    // Returns this rank's short code, such as A or 10.
     public String getCode() {
         return code;
     }
 
-    // Finds the rank matching a code, or reports an error for an unknown code.
+    // Matches a rank code regardless of case, or throws an exception for an unknown code.
     public static Rank fromCode(String code) {
         for (Rank rank : values()) {
             if (rank.code.equalsIgnoreCase(code)) {
