@@ -216,7 +216,6 @@ public class Game {
     }
 
     public static void finalResult(Player champion, long totalRounds, List<Player> players) {
-        displayPlayerStatus(players);
         Main.heading("GAME RESULT");
         Main.centeredSuccessMessage("PLAYER " + champion.getPlayerNumber() + " WINS!");
         Main.centeredSuccessMessage("Congratulations, Player " + champion.getPlayerNumber()
@@ -226,20 +225,5 @@ public class Game {
         champion.displayDeck("FINAL DECK");
         System.out.println();
         Main.centeredSuccessMessage("Thank you for playing the War Card Game!");
-    }
-
-    public static void displayPlayerStatus(List<Player> players) {
-        Main.heading("PLAYER STATUS");
-
-        for (Player player : players) {
-            String status = "ACTIVE";
-            if (player.isEliminated()) {
-                status = "ELIMINATED";
-            }
-
-            System.out.printf(
-                    "Player %-2d : %-12s (%d Cards)%n",
-                    player.getPlayerNumber(), status, player.getDeck().size());
-        }
     }
 }

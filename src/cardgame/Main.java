@@ -15,17 +15,23 @@ public class Main {
     // Loads the cards once, runs each game, and repeats until the user chooses NO.
     public static void main(String[] args) {
         welcome();
+
+        List<Card> cards;
+        try {
+            cards = Deck.loadCards("resources/input.txt");
+        } catch (IOException | IllegalArgumentException exception) {
+            System.out.println("ERROR: Unable to load resources/input.txt.");
+            System.out.println(exception.getMessage());
+            return;
+        }
+
         try (Scanner scanner = new Scanner(System.in)) {
-            List<Card> cards = Deck.loadCards("resources/input.txt");
             do {
                 Game game = createGame(cards, scanner);
                 game.start();
                 playAgainHeading();
             } while (askPlayAgain(scanner));
             goodbye();
-        } catch (IOException | IllegalArgumentException exception) {
-            System.out.println("ERROR: Unable to load resources/input.txt.");
-            System.out.println(exception.getMessage());
         }
     }
 
@@ -115,13 +121,13 @@ public class Main {
         int rightWidth = remainingWidth - leftWidth;
 
         System.out.println();
-        System.out.println(CYAN + "=".repeat(leftWidth) + label + "=".repeat(rightWidth) + RESET);
+        System.out.println(CYAN + repeat('=', leftWidth) + label + repeat('=', rightWidth) + RESET);
         System.out.println();
     }
 
     public static void centeredHeading(String title) {
         int leftPadding = Math.max(0, (OUTPUT_WIDTH - title.length()) / 2);
-        System.out.println(CYAN + " ".repeat(leftPadding) + title + RESET);
+        System.out.println(CYAN + repeat(' ', leftPadding) + title + RESET);
     }
 
     public static void subheading(String label) {
@@ -138,6 +144,14 @@ public class Main {
 
     public static void centeredSuccessMessage(String message) {
         int leftPadding = Math.max(0, (OUTPUT_WIDTH - message.length()) / 2);
-        System.out.println(GREEN + " ".repeat(leftPadding) + message + RESET);
+        System.out.println(GREEN + repeat(' ', leftPadding) + message + RESET);
+    }
+
+    private static String repeat(char character, int count) {
+        StringBuilder result = new StringBuilder(count);
+        for (int i = 0; i < count; i++) {
+            result.append(character);
+        }
+        return result.toString();
     }
 }
