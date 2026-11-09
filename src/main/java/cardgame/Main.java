@@ -18,7 +18,7 @@ public class Main {
         // Read the cards from the file.
         List<Card> cards;
         try {
-            cards = Deck.loadCards("resources/input.txt");
+            cards = Deck.loadCards("input.txt");
         }
         catch (IOException | IllegalArgumentException exception) {
             // Show the problem and stop if the cards cannot be loaded.
