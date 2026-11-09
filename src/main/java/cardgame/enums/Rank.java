@@ -1,6 +1,7 @@
 package cardgame.enums;
 
 public enum Rank {
+    // Allowed ranks, listed from strongest to weakest.
     ACE("A"),
     KING("K"),
     QUEEN("Q"),
@@ -25,7 +26,7 @@ public enum Rank {
         return code;
     }
 
-    // Matches a rank code regardless of case, or throws an exception for an unknown code.
+    // Find the rank for a code such as A or 10. Report an error if it is unknown.
     public static Rank fromCode(String code) {
         for (Rank rank : values()) {
             if (rank.code.equalsIgnoreCase(code)) {

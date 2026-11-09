@@ -4,6 +4,7 @@
 
 # Generated Java output
 out/
+target/
 *.class
 
 # Local presentation notes

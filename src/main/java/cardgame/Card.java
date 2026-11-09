@@ -17,12 +17,14 @@ public class Card implements Comparable<Card> {
         this.rank = rank;
     }
 
-    // Compares rank first, then suit on a tie; earlier enum values are stronger.
-    // Returns a positive value when this card is stronger than the other card.
+    // Compare rank first. If ranks match, compare suits.
+    // Positive = this card wins, negative = other card wins, zero = same card.
     @Override
     public int compareTo(Card otherCard) {
+        // ordinal() is the position in the enum list. Earlier positions are stronger.
         int rankComparison = Integer.compare(otherCard.rank.ordinal(), this.rank.ordinal());
 
+        // If the ranks are different, return the comparison result to show which card has the higher rank.
         if (rankComparison != 0) {
             return rankComparison;
         }
@@ -31,7 +33,10 @@ public class Card implements Comparable<Card> {
     }
 
     public String toColoredString() {
-        String color = suit.isRed() ? RED : WHITE;
+        String color = WHITE;
+        if (suit.isRed()) {
+            color = RED;
+        }
         return color + suit.getSymbol() + " " + toString() + RESET;
     }
 
@@ -40,24 +45,27 @@ public class Card implements Comparable<Card> {
         return suit.getCode() + "-" + rank.getCode();
     }
 
-    // Treats cards with the same suit and rank as equal for duplicate detection.
+    // Two cards are equal if they have the same suit and rank.
     @Override
     public boolean equals(Object object) {
         if (this == object) {
+            // Both names refer to the exact same card object.
             return true;
         }
 
         if (!(object instanceof Card)) {
             return false;
         }
-
+        // Treat the object as a Card and return true if both cards have the same suit and rank.
         Card otherCard = (Card) object;
         return suit == otherCard.suit && rank == otherCard.rank;
     }
 
-    // Combines suit and rank so equal cards share a hash code for HashSet lookup.
+    // Equal cards must also have the same hash code, as required by Java.
     @Override
     public int hashCode() {
+
+        // Build a number using both the suit and rank.
         return 31 * suit.hashCode() + rank.hashCode();
     }
 }

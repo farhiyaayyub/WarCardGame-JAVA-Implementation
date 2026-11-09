@@ -14,7 +14,7 @@ public class Game {
     private final List<Player> players;
     private final Deck mainDeck;
 
-    // Validates the shuffle count, creates the deck and players, then shuffles and deals.
+    // 1. SETUP: Check the shuffle count, create the players and deck, then shuffle and deal.
     public Game(List<Card> originalCards, int numberOfPlayers, int numberOfShuffles) {
         if (numberOfShuffles < MIN_SHUFFLES || numberOfShuffles > MAX_SHUFFLES) {
             throw new IllegalArgumentException(
@@ -32,66 +32,75 @@ public class Game {
         distributeCards();
     }
 
-    // Performs the requested perfect shuffles, then displays the shuffled deck.
+    // 2. SHUFFLE: Shuffle the deck as many times as the user requested.
     private void prepareDeck(int numberOfShuffles) {
         System.out.println();
         System.out.println("Performing " + numberOfShuffles + " perfect shuffle(s)...");
 
-        for (int i = 0; i < numberOfShuffles; i++) {
+        for (int i = 1; i <= numberOfShuffles; i++) {
             mainDeck.perfectShuffle();
         }
 
         System.out.println();
-        Main.subheading("SHUFFLED DECK:");
+        Console.subheading("SHUFFLED DECK:");
         Deck.displayCards(mainDeck.getCards());
     }
 
-    // Deals top cards to players in turn until the main deck is empty, then shows counts.
+    // 3. DEAL: Give one card at a time to each player until the deck is empty.
     private void distributeCards() {
         System.out.println();
-        Main.centeredHeading("DEALING CARDS TO PLAYERS.....");
+        Console.centeredHeading("DEALING CARDS TO PLAYERS.....");
         System.out.println();
 
         int currentPlayer = 0;
 
         while (!mainDeck.isEmpty()) {
+
             Player player = players.get(currentPlayer);
             Card card = mainDeck.removeTop();
             player.getDeck().addBottom(card);
 
-            currentPlayer = (currentPlayer + 1) % players.size();
+            // Move to the next player. After the last player, start at the first again.
+            currentPlayer++;
+            if (currentPlayer == players.size()) {
+                currentPlayer = 0;
+            }
         }
 
-        Main.successMessage("All 52 cards have been distributed.");
+        Console.successMessage("All 52 cards have been distributed.");
         System.out.println();
 
+        // Show how many cards each player received.
         for (Player player : players) {
-            System.out.println(
-                    "PLAYER " + player.getPlayerNumber() + " - " + player.getDeck().size() + " CARDS");
+            System.out.println("PLAYER " + player.getPlayerNumber() + " - " + player.getDeck().size() + " CARDS");
         }
     }
 
-    // Checks for a champion before each round; displays the final result when one is found.
+    // 4. GAME LOOP: Main calls this after setup. Keep playing rounds until someone wins.
     public void start() {
         System.out.println();
-        Main.centeredHeading("THE CARD BATTLE BEGINS!");
+        Console.centeredHeading("THE CARD BATTLE BEGINS!");
 
         long roundNumber = 1;
 
+        // Repeat this loop until findChampion finds a player with all 52 cards.
         while (true) {
             Player champion = findChampion();
 
             if (champion != null) {
-                finalResult(champion, roundNumber - 1, players);
+                displayFinalResult(champion, roundNumber - 1);
+
+                // End start() and return to Main, which asks whether to play again.
                 return;
             }
 
             playRound(roundNumber);
+            // Move to the next round, then check for a champion again.
             roundNumber++;
         }
     }
 
-    // Returns the player holding all 52 cards, or null if there is no champion yet.
+    // 5. CHECK CHAMPION: Before each round, check if a player has all 52 cards.
     private Player findChampion() {
         for (Player player : players) {
             if (player.getDeck().size() == 52) {
@@ -102,35 +111,39 @@ public class Game {
         return null;
     }
 
-    // 1. Opens the round, draws cards, and displays each player's card.
-    // 2. Finds the winner and adds the collected cards to their deck.
-    // 3. Displays the result and updated deck, then checks eliminations.
+    // 6. PLAY ONE ROUND: Follow the steps below, then go back to the game loop.
     private void playRound(long roundNumber) {
-        startRound(roundNumber);
+        displayRoundHeading(roundNumber);
 
+        // Draw -> show cards -> choose winner -> give cards to winner -> check who is out.
         Map<Player, Card> playedCards = drawCards();
         displayPlayedCards(playedCards);
         Player winner = findRoundWinner(playedCards);
         List<Card> collected = collectCards(winner, playedCards);
 
-        roundWinner(winner, roundNumber, collected);
+        displayRoundWinner(winner, roundNumber, collected);
 
         checkEliminations();
     }
 
-    public static void startRound(long round) {
-        Main.heading("START ROUND " + round);
+    // 6.1. Show the current round number.
+    private static void displayRoundHeading(long round) {
+        Console.heading("START ROUND " + round);
     }
 
-    // Removes each active player's top card and records it in player order.
+    // 6.2. Take the top card from each player who still has cards.
     private Map<Player, Card> drawCards() {
+        // Keep each player together with the card they played, in player order.
         Map<Player, Card> playedCards = new LinkedHashMap<>();
 
+        // Check each player one by one.
         for (Player player : players) {
+            // If the player has no cards left, skip to the next player.
             if (!player.isActive()) {
                 continue;
             }
 
+            // Remove the player's top card and store it with the player in playedCards.
             Card card = player.getDeck().removeTop();
             playedCards.put(player, card);
         }
@@ -138,6 +151,7 @@ public class Game {
         return playedCards;
     }
 
+    // 6.3. Show the card that each player played.
     private void displayPlayedCards(Map<Player, Card> playedCards) {
         for (Player player : playedCards.keySet()) {
             Card card = playedCards.get(player);
@@ -145,9 +159,7 @@ public class Game {
         }
     }
 
-    // 1. Uses the first played card as the initial highest card.
-    // 2. Compares the remaining cards using Card.compareTo(), keeping the highest.
-    // 3. Returns its player, or null if no cards were played.
+    // 6.4. Compare the played cards. The player with the highest card wins the round.
     private Player findRoundWinner(Map<Player, Card> playedCards) {
         Player winner = null;
         Card highestCard = null;
@@ -164,20 +176,24 @@ public class Game {
         return winner;
     }
 
-    // 1. Collects the winner's card first, then follows player order with wraparound.
-    // 2. Skips players who did not play and appends the cards to the winner's deck bottom.
-    // 3. Returns the ordered collection for display.
+    // 6.5. Collect the winner's card first, then the others in player order. Add them to the winner's deck.
     private List<Card> collectCards(Player winner, Map<Player, Card> playedCards) {
         List<Card> collected = new ArrayList<>();
         int totalPlayers = players.size();
-        int winnerIndex = winner.getPlayerNumber() - 1;
+        // Player 1 is at list position 0, so subtract 1.
+        int playerIndex = winner.getPlayerNumber() - 1;
 
+        // Repeat once for each player to collect the cards they played
         for (int offset = 0; offset < totalPlayers; offset++) {
-            int playerIndex = (winnerIndex + offset) % totalPlayers;
             Player player = players.get(playerIndex);
             Card card = playedCards.get(player);
             if (card != null) {
                 collected.add(card);
+            }
+            // Continue around the players, starting from the winner.
+            playerIndex++;
+            if (playerIndex == totalPlayers) {
+                playerIndex = 0;
             }
         }
 
@@ -188,9 +204,10 @@ public class Game {
         return collected;
     }
 
-    public static void roundWinner(Player winner, long round, List<Card> collected) {
+    // 6.6. Show the round winner, collected cards, and the winner's updated deck.
+    private static void displayRoundWinner(Player winner, long round, List<Card> collected) {
         System.out.println();
-        Main.successMessage("ROUND " + round + " WINNER: PLAYER " + winner.getPlayerNumber());
+        Console.successMessage("ROUND " + round + " WINNER: PLAYER " + winner.getPlayerNumber());
         System.out.println();
 
         StringJoiner collectedCards = new StringJoiner(", ");
@@ -198,13 +215,13 @@ public class Game {
             collectedCards.add(card.toColoredString());
         }
 
-        Main.subheading("COLLECTED CARDS:");
+        Console.subheading("COLLECTED CARDS:");
         System.out.println(collectedCards);
 
         winner.displayDeck("UPDATED DECK");
     }
 
-    // After collection, marks players with empty decks as eliminated and announces each once.
+    // 6.7. Announce players who ran out of cards. Then the next round can begin.
     private void checkEliminations() {
         for (Player player : players) {
             if (!player.isActive() && !player.isEliminated()) {
@@ -215,15 +232,16 @@ public class Game {
         }
     }
 
-    public static void finalResult(Player champion, long totalRounds, List<Player> players) {
-        Main.heading("GAME RESULT");
-        Main.centeredSuccessMessage("PLAYER " + champion.getPlayerNumber() + " WINS!");
-        Main.centeredSuccessMessage("Congratulations, Player " + champion.getPlayerNumber()
+    // 7. END GAME: Once a champion is found, show the winner and total rounds played.
+    private static void displayFinalResult(Player champion, long totalRounds) {
+        Console.heading("GAME RESULT");
+        Console.centeredSuccessMessage("PLAYER " + champion.getPlayerNumber() + " WINS!");
+        Console.centeredSuccessMessage("Congratulations, Player " + champion.getPlayerNumber()
                 + "! You collected all 52 cards!");
         System.out.println();
         System.out.println("Total Rounds Played: " + totalRounds);
         champion.displayDeck("FINAL DECK");
         System.out.println();
-        Main.centeredSuccessMessage("Thank you for playing the War Card Game!");
+        Console.centeredSuccessMessage("Thank you for playing the War Card Game!");
     }
 }

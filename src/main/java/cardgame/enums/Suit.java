@@ -1,6 +1,7 @@
 package cardgame.enums;
 
 public enum Suit {
+    // Allowed suits, listed from strongest to weakest when ranks are tied.
     DIAMOND("D", "\u2666"),
     HEART("H", "\u2665"),
     SPADE("S", "\u2660"),
@@ -26,7 +27,7 @@ public enum Suit {
         return this == DIAMOND || this == HEART;
     }
 
-    // Matches a suit code regardless of case, or throws an exception for an unknown code.
+    // Find the suit for a code such as D or H. Report an error if it is unknown.
     public static Suit fromCode(String code) {
         for (Suit suit : values()) {
             if (suit.code.equalsIgnoreCase(code)) {
