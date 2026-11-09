@@ -1,6 +1,9 @@
 package cardgame;
 
-// Add colors and spacing to the messages shown on screen.
+/**
+ * Provides shared formatting for consistent colors, headings, spacing, and prompts.
+ * Main methods: heading(), subheading(), prompt(), successMessage().
+ */
 public final class Console {
 
     private static final int OUTPUT_WIDTH = 52;

@@ -3,6 +3,11 @@ package cardgame;
 import cardgame.enums.Rank;
 import cardgame.enums.Suit;
 
+/**
+ * Represents one card with a suit and rank. Compares itself with other cards
+ * and provides plain and colored text representations.
+ * Main methods: compareTo(), toString(), toColoredString(), equals(), hashCode().
+ */
 public class Card implements Comparable<Card> {
 
     private static final String RED = "\u001B[91m";

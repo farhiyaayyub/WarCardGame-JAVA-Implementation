@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Entry point of the program. Loads cards, reads and validates user input,
+ * creates a game, and asks whether to play again.
+ * Main methods: main(), createGame(), readNumber(), askPlayAgain().
+ */
 public class Main {
 
     // Flow: welcome -> load cards -> set up game -> play -> ask to play again.
@@ -32,6 +37,9 @@ public class Main {
                 playAgainHeading();
             } while (askPlayAgain(scanner));
             goodbye();
+        } catch (Exception e) {
+            System.out.println("Error has been encountered:" + e.getMessage());
+            System.exit(0);
         }
     }
 

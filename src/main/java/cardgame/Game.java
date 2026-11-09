@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+/**
+ * Controls the game. Shuffles and deals cards, runs rounds, selects round winners,
+ * and checks for eliminated players and the champion.
+ * Main methods: start(), playRound(), findRoundWinner(), collectCards().
+ */
 public class Game {
 
     public static final int MIN_SHUFFLES = 1;

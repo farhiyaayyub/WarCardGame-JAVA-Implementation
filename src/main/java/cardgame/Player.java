@@ -1,6 +1,9 @@
 package cardgame;
 
-// Keep one player's number, cards, and whether they have been marked out.
+/**
+ * Represents one player. Stores the player number, personal deck, and elimination status.
+ * Main methods: getDeck(), isActive(), eliminate().
+ */
 public class Player {
 
     private final int playerNumber;

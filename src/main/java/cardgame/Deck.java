@@ -16,6 +16,11 @@ import java.util.Deque;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * Manages the collection and order of cards. Reads and validates the input file,
+ * shuffles the deck, and adds or removes cards.
+ * Main methods: loadCards(), perfectShuffle(), removeTop(), addBottom().
+ */
 public class Deck {
 
     // Think of this as a pile: take cards from the top and add cards at the bottom.
