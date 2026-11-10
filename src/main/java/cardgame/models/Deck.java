@@ -1,4 +1,4 @@
-package cardgame;
+package cardgame.models;
 
 import cardgame.enums.Rank;
 import cardgame.enums.Suit;
@@ -20,20 +20,38 @@ import java.util.StringTokenizer;
  * Manages the collection and order of cards. Reads and validates the input file,
  * shuffles the deck, and adds or removes cards.
  * Main methods: loadCards(), perfectShuffle(), removeTop(), addBottom().
+ *
+ * @author Farhiya Ayyub
+ * @version October 30, 2026
  */
 public class Deck {
 
     // Think of this as a pile: take cards from the top and add cards at the bottom.
     private final Deque<Card> cards = new ArrayDeque<>();
 
+    /**
+     * Creates an empty deck.
+     */
     public Deck() {
     }
 
+    /**
+     * Creates a deck containing the supplied cards in their original order.
+     *
+     * @param initialCards cards to copy into the deck
+     */
     public Deck(List<Card> initialCards) {
         cards.addAll(initialCards);
     }
 
-    // Read the file -> check each card -> return 52 different cards.
+    /**
+     * Loads and validates exactly 52 distinct cards from a file or bundled resource.
+     *
+     * @param filename disk path or resource name to read
+     * @return validated cards in input order
+     * @throws IOException              if the file cannot be found or read
+     * @throws IllegalArgumentException if a card is invalid, duplicated, or the count is not 52
+     */
     public static List<Card> loadCards(String filename) throws IOException {
         List<Card> cards = new ArrayList<>();
 
@@ -74,6 +92,13 @@ public class Deck {
         return cards;
     }
 
+    /**
+     * Opens a UTF-8 reader, preferring a disk file over the bundled resource.
+     *
+     * @param filename disk path or resource name to open
+     * @return an open reader that the caller must close
+     * @throws IOException if the file cannot be found or opened
+     */
     private static BufferedReader openCardReader(String filename) throws IOException {
         // Look for the file on disk first, then inside the packaged application.
         if (Files.exists(Paths.get(filename))) {
@@ -88,8 +113,11 @@ public class Deck {
         return new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
     }
 
-    // Split the pile in half, then take one card from each half in turn.
-    // Example: [A, B, C, D] -> [A, C, B, D].
+    /**
+     * Interleaves the first and second halves, starting with the first half.
+     *
+     * @throws IllegalStateException if the deck contains an odd number of cards
+     */
     public void perfectShuffle() {
         List<Card> original = getCards();
 
@@ -106,35 +134,66 @@ public class Deck {
         }
     }
 
+    /**
+     * Removes the card at the top of the deck.
+     *
+     * @return the removed card
+     * @throws java.util.NoSuchElementException if the deck is empty
+     */
     public Card removeTop() {
         // Take out and return the first card.
         return cards.removeFirst();
     }
 
+    /**
+     * Appends a card to the bottom of the deck.
+     *
+     * @param card card to append
+     * @throws NullPointerException if the card is null
+     */
     public void addBottom(Card card) {
         // Place the card at the end of the pile.
         cards.addLast(card);
     }
 
+    /**
+     * Checks whether the deck has no cards.
+     *
+     * @return true if the deck is empty
+     */
     public boolean isEmpty() {
         return cards.isEmpty();
     }
 
+    /**
+     * Counts the cards currently in the deck.
+     *
+     * @return the number of cards
+     */
     public int size() {
         return cards.size();
     }
 
+    /**
+     * Copies the deck's cards in top-to-bottom order.
+     *
+     * @return a new list whose modification does not change this deck
+     */
     public List<Card> getCards() {
         // Return a copy so changing the list does not change this deck.
         return new ArrayList<>(cards);
     }
 
+    /**
+     * Prints colored cards with up to eight cards per row.
+     *
+     * @param cards cards to display in list order
+     */
     public static void displayCards(List<Card> cards) {
         if (cards.isEmpty()) {
             System.out.println("(No cards)");
             return;
         }
-
         int count = 0;
 
         // Go through each card in the list.
@@ -156,7 +215,11 @@ public class Deck {
         }
     }
 
-    // Return the deck's list of cards as text.
+    /**
+     * Formats the deck as a list of card codes.
+     *
+     * @return the textual representation of the cards
+     */
     @Override
     public String toString() {
         return cards.toString();

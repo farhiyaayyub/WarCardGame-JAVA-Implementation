@@ -1,4 +1,4 @@
-package cardgame;
+package cardgame.models;
 
 import cardgame.enums.Rank;
 import cardgame.enums.Suit;
@@ -7,6 +7,9 @@ import cardgame.enums.Suit;
  * Represents one card with a suit and rank. Compares itself with other cards
  * and provides plain and colored text representations.
  * Main methods: compareTo(), toString(), toColoredString(), equals(), hashCode().
+ *
+ * @author Farhiya Ayyub
+ * @version October 30, 2026
  */
 public class Card implements Comparable<Card> {
 
@@ -17,13 +20,21 @@ public class Card implements Comparable<Card> {
     private final Suit suit;
     private final Rank rank;
 
+    /**
+     * Creates a card with the given suit and rank.
+     * @param suit the card's suit
+     * @param rank the card's rank
+     */
     public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
     }
 
-    // Compare rank first. If ranks match, compare suits.
-    // Positive = this card wins, negative = other card wins, zero = same card.
+    /**
+     * Compares cards by rank, using suit to break rank ties.
+     * @param otherCard card to compare with this card
+     * @return a positive value if this card is stronger, a negative value if weaker, or zero if equal
+     */
     @Override
     public int compareTo(Card otherCard) {
         // ordinal() is the position in the enum list. Earlier positions are stronger.
@@ -37,6 +48,10 @@ public class Card implements Comparable<Card> {
         return Integer.compare(otherCard.suit.ordinal(), this.suit.ordinal());
     }
 
+    /**
+     * Formats the card with a suit symbol and ANSI color codes.
+     * @return the colored card representation
+     */
     public String toColoredString() {
         String color = WHITE;
         if (suit.isRed()) {
@@ -45,12 +60,20 @@ public class Card implements Comparable<Card> {
         return color + suit.getSymbol() + " " + toString() + RESET;
     }
 
+    /**
+     * Formats the card using its suit and rank codes.
+     * @return a card code such as H-A
+     */
     @Override
     public String toString() {
         return suit.getCode() + "-" + rank.getCode();
     }
 
-    // Two cards are equal if they have the same suit and rank.
+    /**
+     * Checks whether another object is a card with the same suit and rank.
+     * @param object object to compare with this card
+     * @return true if both cards have the same suit and rank
+     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -66,7 +89,10 @@ public class Card implements Comparable<Card> {
         return suit == otherCard.suit && rank == otherCard.rank;
     }
 
-    // Equal cards must also have the same hash code, as required by Java.
+    /**
+     * Combines suit and rank hashes so equal cards have equal hash codes.
+     * @return the hash code for this card
+     */
     @Override
     public int hashCode() {
 

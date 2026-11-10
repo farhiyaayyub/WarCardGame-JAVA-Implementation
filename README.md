@@ -60,11 +60,14 @@ play again. With the supplied input file, this finishes after 7 rounds.
 src/main/
     java/cardgame/
         Main.java             Entry point, setup input, and play-again loop
-        Console.java          Shared console headings, colors, and prompts
-        Game.java             Game setup, rounds, winners, and eliminations
-        Card.java             One card, comparison rules, and card formatting
-        Deck.java             File loading, validation, shuffling, and card queue
-        Player.java           Player number, deck, and elimination state
+        game/
+            Game.java         Game setup, rounds, winners, and eliminations
+        models/
+            Card.java         One card, comparison rules, and card formatting
+            Deck.java         File loading, validation, shuffling, and card queue
+            Player.java       Player number, deck, and elimination state
+        utils/
+            Console.java      Shared console headings, colors, and prompts
         enums/
             Rank.java         Allowed ranks, codes, and strongest-first order
             Suit.java         Allowed suits, codes, symbols, and tie-break order
